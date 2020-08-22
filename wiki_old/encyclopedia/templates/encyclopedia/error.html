@@ -1,0 +1,23 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {% if title == "Search Results" %}
+        No page.
+    {% else %}
+        404 error - wiki
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+    
+    <a href="{% url 'index' %}">Return to menu</a>
+     {% if title == "Search Results" %}
+        {{body}}
+    {% else %}
+
+        <h1>404 Error- Page "{{ title }}" not found</h1>
+    {% endif %}
+
+{% endblock %} 
+
