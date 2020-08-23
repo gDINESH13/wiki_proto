@@ -60,7 +60,7 @@ def random(request):
 	entry=rd.choice(entries)
 	return HttpResponseRedirect(reverse("wiki",kwargs={"title":entry}))
 def new(request):
-	if request.method=="POST":
+	if request.method=="POST" :
 		form=newpage(request.POST)
 		if form.is_valid():
 			title=form.cleaned_data["title"]
@@ -76,5 +76,17 @@ def new(request):
 	return render(request,"encyclopedia/newpage.html",{"form":newpage()})
 
 
-
+def edit(request,title1):
+	if request.method=="GET":
+		current_title=title1
+		md_content=util.get_entry(current_title)
+		return render(request,"encyclopedia/edit.html",{"form":newpage(initial={"title":current_title,"content":md_content}),"tat":current_title})
+	
+	if request.method=="POST":
+		form=newpage(request.POST)
+		if form.is_valid():
+			title=form.cleaned_data["title"]
+			edited_content=form.cleaned_data["content"]
+			util.save_entry(title,edited_content)
+			return HttpResponseRedirect(reverse("wiki",kwargs={"title":title}))
 

@@ -3,5 +3,10 @@
     {{title}}
 {% endblock %}
 {% block body %}
+
   {{markdown|safe}}
+  <!--<a href="{% url 'edit' title %}">editpage</a>-->
+  <form action="{% url 'edit' title %}">
+  	<input type="submit" value="edit">
+  </form>
 {% endblock %}
