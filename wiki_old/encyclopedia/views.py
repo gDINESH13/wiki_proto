@@ -11,7 +11,7 @@ from django.http import HttpResponseRedirect
 
 
 class newpage(forms.Form):
-	title=forms.CharField(label="Title")
+	title=forms.CharField(label="Title",widget=forms.TextInput)
 	content=forms.CharField(label="Add Content",widget=forms.Textarea)
 
 
@@ -29,7 +29,7 @@ def index(request):
 			l["entries"]=possibility
 
 			if (len(possibility)==0):
-				l["body"]="No Search found."
+				l["body"]="No such page exist."
 				return render(request,"encyclopedia/error.html",l)
 			return render(request,"encyclopedia/index.html",l)
 			
@@ -39,24 +39,17 @@ def index(request):
 
 
 	
-	#return render(request, "encyclopedia/index.html", context)
+	
 def wiki(request,title):
-	"""try:
+	try:
 		html=markdown2.markdown(util.get_entry(title))
 	except:
-		
-		return render(request, "encyclopedia/error.html", {"title": title})"""
-	
-	html=markdown2.markdown(util.get_entry(title))
+		return render(request,"encyclopedia/error.html",{"body":"No such page exist","title":"Search Results"})
 	l={"entries":util.list_entries(),"title":title,"markdown":str(html)}
 	return render(request,"encyclopedia/wiki.html",l)
-
-
-
+   
 def random(request):
 	entries=util.list_entries()
-	size=len(entries)
-	#rand=rd.randint(size)
 	entry=rd.choice(entries)
 	return HttpResponseRedirect(reverse("wiki",kwargs={"title":entry}))
 def new(request):
@@ -69,7 +62,7 @@ def new(request):
 				util.save_entry(title,content)
 				return HttpResponseRedirect(reverse("wiki",kwargs={"title":title}))
 			else:
-				messages.error(request,"entry already exist")
+				messages.error(request,"Title already exist (close this alert message and try again)")
 				return render(request,"encyclopedia/newpage.html",{"form":form})
 		else:
 			return render(request,"encyclopedia/newpage.html",{"form":form})
@@ -77,6 +70,10 @@ def new(request):
 
 
 def edit(request,title1):
+	try:
+		html=markdown2.markdown(util.get_entry(title1))
+	except:
+		return render(request,"encyclopedia/error.html",{"body":"No such page exist","title":"Search Results"})
 	if request.method=="GET":
 		current_title=title1
 		md_content=util.get_entry(current_title)
